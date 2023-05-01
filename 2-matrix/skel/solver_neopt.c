@@ -50,5 +50,8 @@ double* my_solver(int N, double *A, double* B) {
 		}
 	}
 
+	free(A_t);
+	free(B_t);
+
 	return Result;
 }
