@@ -10,22 +10,21 @@
 double* my_solver(int N, double *A, double* B) {
 	printf("OPT SOLVER\n");
 	// calculate A transposed
-	double *A_t = (double *) malloc(N * N * sizeof(double));
+	double *A_t = (double *) calloc(N * N, sizeof(double));
 	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N - i; j++)
-			A_t[i * N + j] = A[j * N + i];
+		for (int j = i; j < N; j++)
+			A_t[j * N + i] = A[i * N + j];
 	// calculate B transposed
-	double *B_t = (double *) malloc(N * N * sizeof(double));
+	double *B_t = (double *) calloc(N * N, sizeof(double));
 	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N - i; j++)
-			B_t[i * N + j] = B[j * N + i];
+		for (int j = 0; j < N; j++)
+			B_t[j * N + i] = B[i * N + j];
 
-	double *Result = (double *) malloc(N * N * sizeof(double));
-	// Result = A*B
+	double *Result = (double *) calloc(N * N, sizeof(double));
+	// Result = A * B
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			Result[i * N + j] = 0;
-			for (int k = 0; k <= N - i && k <= N - j; k++) {
+			for (int k = i; k < N; k++) {
 				Result[i * N + j] += A[i * N + k] * B[k * N + j];
 			}
 		}
@@ -34,7 +33,7 @@ double* my_solver(int N, double *A, double* B) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			double sum = 0;
-			for (int k = 0; k <= N - i && k <= N - j; k++) {
+			for (int k = j; k < N; k++) {
 				sum += Result[i * N + k] * A_t[k * N + j];
 			}
 			Result[i * N + j] = sum;
@@ -42,10 +41,10 @@ double* my_solver(int N, double *A, double* B) {
 	}
 	// Result += B_t * B_t
 	for (int i = 0; i < N; i++) {
-		for (int j = i; j < N; j++) {
+		for (int j = 0; j < N; j++) {
 			double sum = 0;
-			for (int k = 0; k <= N - i && k <= N - j; k++) {
-				sum += B_t[i * N + k] * B_t[j * N + k];
+			for (int k = 0; k < N; k++) {
+				sum += B_t[i * N + k] * B_t[k * N + j];
 			}
 			Result[i * N + j] += sum;
 		}
