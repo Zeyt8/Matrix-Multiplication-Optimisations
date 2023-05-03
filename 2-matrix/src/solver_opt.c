@@ -8,34 +8,7 @@
  * Add your optimized implementation here
  */
 double* my_solver(int N, double *A, double* B) {
-	printf("OPT SOLVER\n");
-	// calculate A transposed
-	double *A_t = (double *) calloc(N * N, sizeof(double));
-	for (int i = 0; i < N; i++) {
-		double *A_t_i = A_t + i * N + i;
-		double *A_i = A + i * N + i;
-		for (int j = i; j < N; j++) {
-			*A_t_i = *A_i;
-			A_t_i += N;
-			A_i++;
-		}
-	}
-		
-	// calculate B transposed
-	double *B_t = (double *) malloc(N * N * sizeof(double));
-	for (int i = 0; i < N; i++) {
-		double *B_t_i = B_t + i;
-		double *B_i = B + i * N;
-		for (int j = 0; j < N; j += 2) {
-			*B_t_i = *B_i;
-			B_t_i += N;
-			B_i++;
-			*B_t_i = *B_i;
-			B_t_i += N;
-			B_i++;
-		}
-	}
-
+	printf("OPT SOLVER\n");	
 	int block_size = 40;
 
 	double *Result = (double *) malloc(N * N * sizeof(double));
@@ -76,11 +49,11 @@ double* my_solver(int N, double *A, double* B) {
 						int k_min = kk > j ? kk : j;
                     	register double sum = 0;
 						double *R_i = Result + i * N + k_min;
-						double *A_t_i = A_t + k_min * N + j;
+						double *A_t_i = A + j * N + k_min;
                     	for (int k = k_min; k < k_max; k++) {
                         	sum += (*R_i) * (*A_t_i);
 							R_i++;
-							A_t_i += N;
+							A_t_i++;
                     	}
                     	Result2[i * N + j] += sum;
                 	}
@@ -100,15 +73,15 @@ double* my_solver(int N, double *A, double* B) {
             	for (int i = ii; i < i_max; i++) {
                 	for (int j = jj; j < j_max; j++) {
                     	register double sum = 0;
-						double *B_t_i = B_t + i * N + kk;
-						double *B_t_i2 = B_t + kk * N + j;
+						double *B_t_i = B + kk * N + i;
+						double *B_t_i2 = B + j * N + kk;
                     	for (int k = kk; k < k_max; k += 2) {
                         	sum += (*B_t_i) * (*B_t_i2);
-							B_t_i++;
-							B_t_i2 += N;
+							B_t_i += N;
+							B_t_i2++;
 							sum += (*B_t_i) * (*B_t_i2);
-							B_t_i++;
-							B_t_i2 += N;
+							B_t_i += N;
+							B_t_i2++;
                     	}
                     	Result[i * N + j] += sum;
                 	}
@@ -117,8 +90,5 @@ double* my_solver(int N, double *A, double* B) {
     	}
 	}
 	
-	free(A_t);
-	free(B_t);
-
 	return Result;
 }
