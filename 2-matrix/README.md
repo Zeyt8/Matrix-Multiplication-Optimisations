@@ -48,3 +48,24 @@ Usage:
 
 ## Results
 
+### Time
+
+As we can see from the graphs, the naive implementation is the slowest. A manual computation of the data in the graph shows that M_size[i+1]/M_size[i]=cubic_root(time[i+1])/cubic_root(time[i]). That means that the time complexity is O(n<sup>3</sup>).
+
+The optimised version is faster by a significant amount, but the blas implementation is the fastest by far. These result are to be expected. Again, a manual computation of the data shows that the complexity is still O(n<sup>3</sup>).
+
+Memory is the main bottle neck, so my optimisations are very effective, but there is only so much I can do without changing the algorithm. A manual computation reveals that the complexity is, I think, still O(n<sup>3</sup>).
+
+Blas is the fastest because it is a highly optimised library that uses vectorial operations. It probably uses all the optimisations the compiler with O3 would use, but it also has a lot of other manual optimisations.
+
+### Cachegrind
+
+As expected neopt has a lot of cache misses.
+
+The optimised version has a lot less. That happens because the main optimisation used is block matrix multiplication which is designed to reduce the number of cache misses.
+
+I noticed that if I tried to do the addition with B<sup>t</sup>×B<sup>t</sup> and A<sup>t</sup> × B<sup>t</sup> in the same loop, the time to run increased, which is probably caused by a lot of extra cache misses.
+
+Surprinzigly, the blas implementation has a bit less data accesses, a bit less first level cache misses, but a bit more last level cache misses. The conclusion that can be drawn is that the first 2 are more important and increase the performance.
+
+I can also see that blass has a lot less branch misspredicts and branches over all. This fact dramatically improves the performance. Also the number of instruction cache references is a lot lower.
