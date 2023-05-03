@@ -18,15 +18,17 @@ In the end I calculate B<sup>t</sup> × B<sup>t</sup> and add it to *Result*.
 
 ### Opt
 
-The overall flow of the program is the same as Neopt with a few changes which I will explain below.
-
 I am using block matrix multiplication for all the multiplications. In addition, I am working with pointers instead of accessing the matrix elements with the index operator. Also, I am storing the sums in a temporary variable instead of directly adding them to the result matrix.
 
-The transpositions are optimised as before.
+The transpositions are not necessary, I can just acces elements from the matrix in a different order.
 
 Since I am working with blocks, to optimise for upper triangular matrices, instead of skipping to the i-th column, I only skip to it if it is part of the current block.
 
 For the second multiplication (the one with A<sup>t</sup>), I need a temporary matrix to store the result. This happens because of the partial sums made by the block matrix algorithm.
+
+I also use loop unrolling. For B<sup>t</sup>xB<sup>t</sup> I unroll the loop by 4 and the procedure is trivial. Considering that k_max - kk is always equal to the block_size, that loop could be removed entirely and the computation manually repeated 40 times to further improve the performance.
+
+For the multiplications that include A, I also did loop unrolling, but the optimisation for upper triangular matrix caused me some problems. Hence I treated sepparately the case when k_min is not divisible by 2(I don't unroll), is divisible by 4(unroll by 4) and is divisible by 2(unroll by 2). A more general solution surely exists, but I couldn't find it.
 
 ### Blas
 

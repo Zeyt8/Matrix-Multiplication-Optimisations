@@ -33,6 +33,21 @@ double* my_solver(int N, double *A, double* B) {
 								A_i++;
 								B_i += N;
                     		}
+						else if (k_min % 4 == 0)
+							for (int k = k_min / 4; k < k_max / 4; k++) {
+                        		sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+								sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+								sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+								sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+                    		}
 						else
 							for (int k = k_min / 2; k < k_max / 2; k++) {
                         		sum += (*A_i) * (*B_i);
@@ -64,6 +79,21 @@ double* my_solver(int N, double *A, double* B) {
 						if (k_min % 2 == 1)
                     		for (int k = k_min; k < k_max; k++) {
                         		sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+                    		}
+						else if (k_min % 4 == 0)
+							for (int k = k_min / 4; k < k_max / 4; k++) {
+                        		sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+								sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+								sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+								sum += (*R_i) * (*A_t_i);
 								R_i++;
 								A_t_i++;
                     		}
