@@ -22,9 +22,10 @@ double* my_solver(int N, double *A, double* B) {
             	int k_max = kk + block_size;
             	for (int i = ii; i < i_max; i++) {
 					int k_min = kk > i ? kk : i;
+					double *A_i_orig = A + i * N + k_min;
                 	for (int j = jj; j < j_max; j++) {
                     	register double sum = 0;
-						double *A_i = A + i * N + k_min;
+						double *A_i = A_i_orig;
 						double *B_i = B + k_min * N + j;
                     	for (int k = k_min; k < k_max; k++) {
                         	sum += (*A_i) * (*B_i);
@@ -71,9 +72,10 @@ double* my_solver(int N, double *A, double* B) {
             	int j_max = jj + block_size;
             	int k_max = kk + block_size;
             	for (int i = ii; i < i_max; i++) {
+					double *B_t_i_orig = B + kk * N + i;
                 	for (int j = jj; j < j_max; j++) {
                     	register double sum = 0;
-						double *B_t_i = B + kk * N + i;
+						double *B_t_i = B_t_i_orig;
 						double *B_t_i2 = B + j * N + kk;
                     	for (int k = kk / 2; k < k_max / 2; k++) {
                         	sum += (*B_t_i) * (*B_t_i2);
