@@ -11,8 +11,8 @@ double* my_solver(int N, double *A, double* B) {
 	printf("OPT SOLVER\n");	
 	int block_size = 40;
 
-	double *Result = (double *) malloc(N * N * sizeof(double));
-	double *Result2 = (double *) malloc(N * N * sizeof(double));
+	double *Result = (double *) calloc(N * N, sizeof(double));
+	double *Result2 = (double *) calloc(N * N, sizeof(double));
 	// Result = A * B
 	for (int ii = 0; ii < N; ii += block_size) {
     	for (int kk = 0; kk < N; kk += block_size) {
@@ -26,7 +26,7 @@ double* my_solver(int N, double *A, double* B) {
                     	register double sum = 0;
 						double *A_i = A + i * N + k_min;
 						double *B_i = B + k_min * N + j;
-                    	for (int k = k_min; k < k_max; k += 1) {
+                    	for (int k = k_min; k < k_max; k++) {
                         	sum += (*A_i) * (*B_i);
 							A_i++;
 							B_i += N;
@@ -75,7 +75,7 @@ double* my_solver(int N, double *A, double* B) {
                     	register double sum = 0;
 						double *B_t_i = B + kk * N + i;
 						double *B_t_i2 = B + j * N + kk;
-                    	for (int k = kk; k < k_max; k += 2) {
+                    	for (int k = kk / 2; k < k_max / 2; k++) {
                         	sum += (*B_t_i) * (*B_t_i2);
 							B_t_i += N;
 							B_t_i2++;
