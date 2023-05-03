@@ -22,11 +22,14 @@ double* my_solver(int N, double *A, double* B) {
 	}
 		
 	// calculate B transposed
-	double *B_t = (double *) calloc(N * N, sizeof(double));
+	double *B_t = (double *) malloc(N * N * sizeof(double));
 	for (int i = 0; i < N; i++) {
 		double *B_t_i = B_t + i;
 		double *B_i = B + i * N;
-		for (int j = 0; j < N; j++) {
+		for (int j = 0; j < N; j += 2) {
+			*B_t_i = *B_i;
+			B_t_i += N;
+			B_i++;
 			*B_t_i = *B_i;
 			B_t_i += N;
 			B_i++;
@@ -35,23 +38,22 @@ double* my_solver(int N, double *A, double* B) {
 
 	int block_size = 40;
 
-	double *Result = (double *) calloc(N * N, sizeof(double));
-	double *Result2 = (double *) calloc(N * N, sizeof(double));
+	double *Result = (double *) malloc(N * N * sizeof(double));
+	double *Result2 = (double *) malloc(N * N * sizeof(double));
 	// Result = A * B
 	for (int ii = 0; ii < N; ii += block_size) {
-    	for (int jj = 0; jj < N; jj += block_size) {
-        	for (int kk = 0; kk < N; kk += block_size) {
+    	for (int kk = 0; kk < N; kk += block_size) {
+        	for (int jj = 0; jj < N; jj += block_size) {
             	int i_max = ii + block_size;
             	int j_max = jj + block_size;
             	int k_max = kk + block_size;
-
             	for (int i = ii; i < i_max; i++) {
 					int k_min = kk > i ? kk : i;
                 	for (int j = jj; j < j_max; j++) {
                     	register double sum = 0;
 						double *A_i = A + i * N + k_min;
 						double *B_i = B + k_min * N + j;
-                    	for (int k = k_min; k < k_max; k++) {
+                    	for (int k = k_min; k < k_max; k += 1) {
                         	sum += (*A_i) * (*B_i);
 							A_i++;
 							B_i += N;
@@ -64,12 +66,11 @@ double* my_solver(int N, double *A, double* B) {
 	}
 	// Result *= A_t
 	for (int ii = 0; ii < N; ii += block_size) {
-    	for (int jj = 0; jj < N; jj += block_size) {
-        	for (int kk = 0; kk < N; kk += block_size) {
+    	for (int kk = 0; kk < N; kk += block_size) {
+        	for (int jj = 0; jj < N; jj += block_size) {
             	int i_max = ii + block_size;
             	int j_max = jj + block_size;
             	int k_max = kk + block_size;
-
             	for (int i = ii; i < i_max; i++) {
                 	for (int j = jj; j < j_max; j++) {
 						int k_min = kk > j ? kk : j;
@@ -91,19 +92,21 @@ double* my_solver(int N, double *A, double* B) {
 	Result = Result2;
 	// Result += B_t * B_t
 	for (int ii = 0; ii < N; ii += block_size) {
-    	for (int jj = 0; jj < N; jj += block_size) {
-        	for (int kk = 0; kk < N; kk += block_size) {
+    	for (int kk = 0; kk < N; kk += block_size) {
+        	for (int jj = 0; jj < N; jj += block_size) {
             	int i_max = ii + block_size;
             	int j_max = jj + block_size;
             	int k_max = kk + block_size;
-
             	for (int i = ii; i < i_max; i++) {
                 	for (int j = jj; j < j_max; j++) {
                     	register double sum = 0;
 						double *B_t_i = B_t + i * N + kk;
 						double *B_t_i2 = B_t + kk * N + j;
-                    	for (int k = kk; k < k_max; k++) {
+                    	for (int k = kk; k < k_max; k += 2) {
                         	sum += (*B_t_i) * (*B_t_i2);
+							B_t_i++;
+							B_t_i2 += N;
+							sum += (*B_t_i) * (*B_t_i2);
 							B_t_i++;
 							B_t_i2 += N;
                     	}
