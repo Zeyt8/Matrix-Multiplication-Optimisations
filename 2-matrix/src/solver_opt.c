@@ -27,11 +27,21 @@ double* my_solver(int N, double *A, double* B) {
                     	register double sum = 0;
 						double *A_i = A_i_orig;
 						double *B_i = B + k_min * N + j;
-                    	for (int k = k_min; k < k_max; k++) {
-                        	sum += (*A_i) * (*B_i);
-							A_i++;
-							B_i += N;
-                    	}
+						if (k_min % 2 == 1)
+                    		for (int k = k_min; k < k_max; k++) {
+                        		sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+                    		}
+						else
+							for (int k = k_min / 2; k < k_max / 2; k++) {
+                        		sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+								sum += (*A_i) * (*B_i);
+								A_i++;
+								B_i += N;
+                    		}
                     	Result[i * N + j] += sum;
                 	}
             	}
@@ -51,11 +61,21 @@ double* my_solver(int N, double *A, double* B) {
                     	register double sum = 0;
 						double *R_i = Result + i * N + k_min;
 						double *A_t_i = A + j * N + k_min;
-                    	for (int k = k_min; k < k_max; k++) {
-                        	sum += (*R_i) * (*A_t_i);
-							R_i++;
-							A_t_i++;
-                    	}
+						if (k_min % 2 == 1)
+                    		for (int k = k_min; k < k_max; k++) {
+                        		sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+                    		}
+						else
+							for (int k = k_min / 2; k < k_max / 2; k++) {
+                        		sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+								sum += (*R_i) * (*A_t_i);
+								R_i++;
+								A_t_i++;
+                    		}
                     	Result2[i * N + j] += sum;
                 	}
             	}
@@ -77,8 +97,14 @@ double* my_solver(int N, double *A, double* B) {
                     	register double sum = 0;
 						double *B_t_i = B_t_i_orig;
 						double *B_t_i2 = B + j * N + kk;
-                    	for (int k = kk / 2; k < k_max / 2; k++) {
+                    	for (int k = kk / 4; k < k_max / 4; k++) {
                         	sum += (*B_t_i) * (*B_t_i2);
+							B_t_i += N;
+							B_t_i2++;
+							sum += (*B_t_i) * (*B_t_i2);
+							B_t_i += N;
+							B_t_i2++;
+							sum += (*B_t_i) * (*B_t_i2);
 							B_t_i += N;
 							B_t_i2++;
 							sum += (*B_t_i) * (*B_t_i2);
